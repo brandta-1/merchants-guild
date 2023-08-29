@@ -9,11 +9,6 @@ const userSchema = new Schema(
             required: true,
             trim: true,
         },
-        ign: [
-            {
-                type: String
-            }
-        ],
         password: {
             type: String,
             required: true,

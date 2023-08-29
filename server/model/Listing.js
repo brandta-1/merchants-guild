@@ -2,10 +2,13 @@ const { Schema, model } = require('mongoose');
 
 const listingSchema = new Schema(
     {
-        owner:
+        user:
         {
             type: Schema.Types.ObjectId,
             ref: 'User'
+        },
+        owner: {
+            type: String
         },
         have: [
             {

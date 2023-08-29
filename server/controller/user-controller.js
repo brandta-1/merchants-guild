@@ -1,4 +1,5 @@
 const { User, Listing, Item } = require('../model');
+const uuid = require('../utils/uuid');
 
 module.exports = {
 
@@ -25,7 +26,17 @@ module.exports = {
     },
 
     async getUser(req, res) {
-        //TODO get a user
+        
+        try {
+            //retrieves all users if the front-end does not specify a username
+            const theUser = await User.find(req.body.username ? { username: req.body.username } : null);
+
+            console.log(theUser);
+
+            res.status(200).json(theUser)
+        } catch (err) {
+            res.status(400).json(err)
+        }
     },
 
     async updateUser(req, res) {
@@ -34,22 +45,6 @@ module.exports = {
 
     async deleteUser(req, res) {
         //TODO delete a user
-    },
-
-    async setIgn(req, res) {
-        //TODO let a user add an in-game-name (ign) to their profile
-    },
-
-    async getIgn(req, res) {
-        //TODO get an ign
-    },
-
-    async updateIgn(req, res) {
-        //TODO update an ign
-    },
-
-    async deleteIgn(req, res) {
-        //TODO delete an ign
     },
 
     async login(req, res) {
