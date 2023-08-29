@@ -2,6 +2,9 @@ const express = require('express');
 const session = require('express-session');
 const { connect, connection } = require('mongoose');
 const MongoDBStore = require('connect-mongodb-session')(session);
+const routes = require('./routes');
+
+const app = express();
 
 var store = new MongoDBStore({
     uri: process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/merch-guild',
@@ -31,10 +34,12 @@ connect(connectionString, {
 
 const PORT = process.env.PORT || 3001;
 
-const app = express();
+
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+
+app.use(routes);
 
 connection.once('open', () => {
     app.listen(PORT, () => {
