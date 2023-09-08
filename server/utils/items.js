@@ -1,5 +1,11 @@
-const itemNames = ["TODO: how list all items?"];
+module.exports = {
 
-const itemProperties =[];
+    itemNames: ["TODO: how list all items programmatically?"],
 
-module.exports = itemNames, itemProperties;
+    //see above TODO
+    itemRarity: ['Uncommon', 'Rare', 'Epic', 'Legendary', 'Unique'],
+    
+    itemProperties: ["TODO: same thing here?"],
+
+
+}

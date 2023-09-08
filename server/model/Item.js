@@ -1,11 +1,11 @@
 const { Schema, model } = require('mongoose');
-const { itemNames, itemProperties } = require('../utils/items');
+const { itemNames, itemRarity, itemProperties } = require('../utils/items');
 
 const itemSchema = new Schema(
     {
         rarity: {
             type: String,
-            enum: ['Uncommon', 'Rare', 'Epic', 'Legendary', 'Unique']
+            enum: itemRarity
         },
         name: {
             type: String,
