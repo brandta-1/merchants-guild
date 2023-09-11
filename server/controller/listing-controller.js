@@ -6,6 +6,7 @@ module.exports = {
         //TODO let a user add a listing
         try {
 
+            const descr = Object.values(req.body.pop())[0];
             const theOwner = Object.values(req.body.pop())[0];
             let haveWant = [];
 
@@ -24,7 +25,8 @@ module.exports = {
                 user: req.session.user_id,
                 owner: theOwner,
                 have: haveWant[0],
-                want: haveWant[1]
+                want: haveWant[1],
+                description: descr
             });
 
             console.log(theListing);
@@ -39,12 +41,16 @@ module.exports = {
         //TODO get listings
 
         //search criteria can be items, or an item-attribute
+        //takes in item parameters, finds (if any) IDs that match or are similar
+        //take those item IDs, and grab all listings that have those ID's in them (each listing is only listed once)
+        //push those listings to an array and return the array
         try {
 
-            const theListing = await Listing.find(req.body);
-            console.log(theListing);
+            const items = await Promise.all(req.body.map(i => {
 
-            res.status(200).json(theListing);
+            }));
+
+            res.status(200).json("check console log");
 
         } catch (err) {
             res.status(400).json(err);

@@ -11,18 +11,21 @@ const itemSchema = new Schema(
             type: String,
             enum: itemNames
         },
-        enchantments: {
-            property: {
-                type: String,
-                enum: itemProperties
-            },
-            value: {
-                type: Number
+        enchantments: [
+            {
+                property: {
+                    type: String,
+                    enum: itemProperties
+                },
+                value: {
+                    type: Number
+                }
             }
-        }
+        ]
     }
-); 
+);
 
 const Item = model('Item', itemSchema);
 
 module.exports = Item;
+
