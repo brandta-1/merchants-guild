@@ -3,7 +3,6 @@ const { User, Listing, Item } = require('../model');
 module.exports = {
 
     async setListing(req, res) {
-        //TODO let a user add a listing
         try {
 
             const descr = Object.values(req.body.pop())[0];
@@ -29,7 +28,14 @@ module.exports = {
                 description: descr
             });
 
-            console.log(theListing);
+            const theUser = await User.findOneAndUpdate(
+                { _id: req.session.user_id },
+                { $addToSet: { listings: theListing._id } }
+            );
+
+            // console.log("user",theUser);
+
+            // console.log(theListing);
             res.status(200).json("check console log")
 
         } catch (err) {
@@ -46,11 +52,51 @@ module.exports = {
         //push those listings to an array and return the array
         try {
 
-            const items = await Promise.all(req.body.map(i => {
+            // console.dir(req.body[1], { depth: null });
 
+            // const x = await Item.find(req.body[1]);
+
+            // console.log(x);
+
+            const items = await Promise.all(req.body.map(async (i) => {
+                const theItem = await Item.find(i, '_id');
+                console.log("test",theItem);
+                return theItem;
             }));
 
-            res.status(200).json("check console log");
+           
+
+           console.log(items);
+
+          
+
+            if (items[0].length) {
+                const listings = await Listing.find({
+                    want: {
+                        $in: items[0]
+                    }
+                }).populate('have want');
+
+                console.log(listings.length)
+
+                res.status(200).json(listings);
+            } else {
+                res.status(200).json("empty")
+            }
+            
+
+            //TODO, you want to load similar items no matter what.
+
+            /*
+
+            TODO: your searches need to load similar items, with a logical priority.
+            so your query needs to have an $or operator for rarity, starting at the user's searched rarity, 
+            then by all others in descending order (maybe do ascending if they start at a lower rarity), then after that do by properties
+
+            */
+            
+
+
 
         } catch (err) {
             res.status(400).json(err);
