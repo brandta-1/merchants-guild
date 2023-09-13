@@ -1,5 +1,6 @@
 const { User, Listing, Item } = require('../model');
 
+
 module.exports = {
 
     async setListing(req, res) {
@@ -12,8 +13,70 @@ module.exports = {
             for (const property of Object.values(req.body)) {
 
                 const idArray = await Promise.all(property.map(async (i) => {
+
+                    console.log("this is i", i)
+
+                    const findElem = i.enchantments.map((i) => {
+                        return { $elemMatch: { property: i.property, value: i.value } }
+                    });
+
+
                     //always returns the item, only creates it if it doesnt already exist.
-                    const theItem = await Item.findOneAndUpdate(i, {}, { new: true, upsert: true });
+                    const theItem = await Item.findOneAndUpdate(
+
+                        {
+                            name: i.name,
+                            rarity: i.rarity,
+                            enchantments: { $all: findElem }
+                        },
+
+                        {
+                            $setOnInsert: i
+                        },
+                        // programmatically make this in the method:
+
+                        /*
+                     {
+                     
+                         name: 'Longsword',
+                         rarity: 'Rare',
+
+                         
+                         
+                         enchantments: {
+                             $all: [
+                                 {
+                                     $elemMatch: {
+                                         property: "Strength",
+                                         value: 1
+                                     }
+                                 },
+                                 {
+                                     $elemMatch: {
+                                         property: "Resourcefulness",
+                                         value: 2
+                                     }
+                                 }
+                             ]
+                         }
+
+                         
+                     },
+                     {
+                         $setOnInsert: {
+                             name: 'Longsword',
+                             rarity: 'Rare',
+                             enchantments: [
+                                 { property: 'Strength', value: 1 },
+                                 { property: 'Resourcefulness', value: 2 }
+                               ]
+                         }
+                     },
+
+                     */
+                        {
+                            upsert: true
+                        });
                     return theItem._id.toHexString();
                 }));
 
@@ -59,18 +122,48 @@ module.exports = {
             // console.log(x);
 
             const items = await Promise.all(req.body.map(async (i) => {
-                const theItem = await Item.find(i, '_id');
-                console.log("test",theItem);
-                return theItem;
+
+                console.log(i.name)
+                const theItem = await Item
+                    .aggregate([
+                        { $match: { name: i.name } },
+
+                        {
+                            $addFields:
+                            {
+                                commonalities:
+                                {
+                                    $function:
+                                    {
+                                        body: function (db, req) {
+
+                                            // const dbSet = new Set(db);
+                                            // const reqSet = new Set(req);
+                                            // return  [...dbSet].filter((i) => reqSet.has(i))
+
+                                            return db.filter((i) => req.includes(i)).length
+                                        },
+                                        args: ["$enchantments.property", i.enchantments],
+                                        lang: "js"
+                                    }
+                                }
+                            }
+                        },
+                        { $match: { commonalities: { $gt: 0 } } },
+                        { $sort: { commonalities: -1 } }
+                    ]);
+                console.log("theItem", theItem)
+                return theItem
             }));
 
-           
 
-           console.log(items);
 
-          
+            // console.log("items", items);
+
+
 
             if (items[0].length) {
+                //TODO: this will also likely need to be an aggregate, you want the highest # of haves and wants in the listing, descending order
                 const listings = await Listing.find({
                     want: {
                         $in: items[0]
@@ -83,18 +176,18 @@ module.exports = {
             } else {
                 res.status(200).json("empty")
             }
-            
+
 
             //TODO, you want to load similar items no matter what.
 
             /*
-
+    
             TODO: your searches need to load similar items, with a logical priority.
             so your query needs to have an $or operator for rarity, starting at the user's searched rarity, 
             then by all others in descending order (maybe do ascending if they start at a lower rarity), then after that do by properties
-
+    
             */
-            
+
 
 
 
@@ -115,4 +208,6 @@ module.exports = {
     async setItem(req, res) {
         //TODO add an item
     }
+
+
 }
