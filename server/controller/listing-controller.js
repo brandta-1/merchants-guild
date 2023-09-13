@@ -12,6 +12,7 @@ module.exports = {
 
             for (const property of Object.values(req.body)) {
 
+
                 const idArray = await Promise.all(property.map(async (i) => {
 
                     console.log("this is i", i)
@@ -19,6 +20,8 @@ module.exports = {
                     const findElem = i.enchantments.map((i) => {
                         return { $elemMatch: { property: i.property, value: i.value } }
                     });
+
+                    console.log(findElem);
 
 
                     //always returns the item, only creates it if it doesnt already exist.
@@ -75,12 +78,17 @@ module.exports = {
 
                      */
                         {
+                            new: true,
                             upsert: true
                         });
+
+                    console.log("theItem", theItem)
                     return theItem._id.toHexString();
                 }));
 
+                console.log("idArray", idArray);
                 haveWant.push(idArray);
+                console.log(haveWant);
             }
 
             const theListing = await Listing.create({
@@ -120,54 +128,71 @@ module.exports = {
             // const x = await Item.find(req.body[1]);
 
             // console.log(x);
+            let haveWant = [];
+            for (const property of Object.values(req.body)) {
+                const items = await Promise.all(property.map(async (i) => {
 
-            const items = await Promise.all(req.body.map(async (i) => {
+                    console.log(i.name);
+                    const theItem = await Item
+                        .aggregate([
+                            { $match: { name: i.name } },
 
-                console.log(i.name)
-                const theItem = await Item
-                    .aggregate([
-                        { $match: { name: i.name } },
-
-                        {
-                            $addFields:
                             {
-                                commonalities:
+                                $addFields:
                                 {
-                                    $function:
+                                    commonalities:
                                     {
-                                        body: function (db, req) {
+                                        $function:
+                                        {
+                                            body: function (db, req) {
 
-                                            // const dbSet = new Set(db);
-                                            // const reqSet = new Set(req);
-                                            // return  [...dbSet].filter((i) => reqSet.has(i))
+                                                // const dbSet = new Set(db);
+                                                // const reqSet = new Set(req);
+                                                // return  [...dbSet].filter((i) => reqSet.has(i))
 
-                                            return db.filter((i) => req.includes(i)).length
-                                        },
-                                        args: ["$enchantments.property", i.enchantments],
-                                        lang: "js"
+                                                return db.filter((i) => req.includes(i)).length
+                                            },
+                                            args: ["$enchantments.property", i.enchantments],
+                                            lang: "js"
+                                        }
                                     }
                                 }
-                            }
-                        },
-                        { $match: { commonalities: { $gt: 0 } } },
-                        { $sort: { commonalities: -1 } }
-                    ]);
-                console.log("theItem", theItem)
-                return theItem
-            }));
-
-
+                            },
+                            { $match: { commonalities: { $gt: 0 } } },
+                            { $sort: { commonalities: -1 } },
+                            { $project: { _id: 1, "commonalities": 1 } }
+                        ]);
+                    //console.log("theItem", theItem)
+                    return theItem;
+                }));
+                //  console.log(items);
+                haveWant.push(items.flat())
+            }
 
             // console.log("items", items);
 
+            console.log("this is haveWant", haveWant)
+            // console.dir(haveWant, {depth: 4})
 
-
-            if (items[0].length) {
+            //if any items matched their search then pull up the listings
+            if (haveWant[0].length || haveWant[1].length) {
                 //TODO: this will also likely need to be an aggregate, you want the highest # of haves and wants in the listing, descending order
                 const listings = await Listing.find({
-                    want: {
-                        $in: items[0]
-                    }
+                    $or: [
+                        {
+                            have:
+                            {
+                                $in: haveWant[0]
+                            }
+                        },
+                        {
+                            want:
+                            {
+                                $in: haveWant[1]
+                            }
+                        }
+                    ]
+
                 }).populate('have want');
 
                 console.log(listings.length)

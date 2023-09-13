@@ -1,6 +1,16 @@
 const { Schema, model } = require('mongoose');
 const { itemNames, itemRarity, itemProperties } = require('../utils/items');
 
+const enchSchema = new Schema({
+    property: {
+        type: String,
+        enum: itemProperties
+    },
+    value: {
+        type: Number
+    }
+}, { _id: false })
+
 const itemSchema = new Schema(
     {
         rarity: {
@@ -11,17 +21,7 @@ const itemSchema = new Schema(
             type: String,
             enum: itemNames
         },
-        enchantments: [
-            {
-                property: {
-                    type: String,
-                    enum: itemProperties
-                },
-                value: {
-                    type: Number
-                }
-            }
-        ]
+        enchantments: [enchSchema]
     }
 );
 
