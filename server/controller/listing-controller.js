@@ -1,4 +1,5 @@
 const { User, Listing, Item } = require('../model');
+const { ObjectId } = require('mongoose');
 
 
 module.exports = {
@@ -177,25 +178,90 @@ module.exports = {
             //if any items matched their search then pull up the listings
             if (haveWant[0].length || haveWant[1].length) {
                 //TODO: this will also likely need to be an aggregate, you want the highest # of haves and wants in the listing, descending order
-                const listings = await Listing.find({
-                    $or: [
-                        {
-                            have:
-                            {
-                                $in: haveWant[0]
-                            }
-                        },
-                        {
+
+
+                console.log()
+
+
+
+
+                const listings = await Listing.aggregate([
+                    {
+                        //this is wrong
+                        $match: {
+                            /*
+                            $or: [
+                                {
+                                    have:
+                                    {
+                                        $in: haveWant[0]
+                                    }
+                                },
+                                {
+                                    want:
+                                    {
+                                        $in: haveWant[1]
+                                    }
+                                }
+                            ]
+                            */
                             want:
                             {
-                                $in: haveWant[1]
+                                $in: [haveWant[1][0]._id]
+                            }
+
+                        }
+                    },
+
+
+                    {
+                        $addFields: {
+                            totalCommon:
+                            {
+                                $function:
+                                {
+                                    body: function (dbHave, dbWant, req) {
+
+
+
+                                        //TODO stopped here
+                                        // const matches = req[0].filter((i) => dbHave.includes(i._id));
+                                        // return matches.reduce((a, c) => a + c, matches[0])
+
+                                        /*
+
+                                         return req.map((i, j) => {
+                                             return i.filter((k) => this[j].includes(k._id));
+                                         }, arguments).flat().reduce((a,c) => a + c);
+
+                                        */
+
+                                         //this works as of 9/14 8:10pm check notes for further details
+                                           return req[1].filter((i) => {
+    
+                                               
+                                               return dbWant.map(i => i.toString()).includes(i._id.toString())
+    
+                                           })
+
+                                           //TODO ^ use reduce on the above to sum the commonalities
+    
+                            
+                                    },
+                                    args: ["$have", "$want", haveWant],
+                                    lang: "js"
+                                }
                             }
                         }
-                    ]
+                    },
 
-                }).populate('have want');
+                    { $project: { "totalCommon": 1 } }
 
-                console.log(listings.length)
+
+                ])
+                // .populate('have want');
+
+                console.log(listings)
 
                 res.status(200).json(listings);
             } else {
