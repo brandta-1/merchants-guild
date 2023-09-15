@@ -160,7 +160,8 @@ module.exports = {
                                 }
                             },
                             { $match: { commonalities: { $gt: 0 } } },
-                            { $sort: { commonalities: -1 } },
+                            //this shouldnt matter
+                            // { $sort: { commonalities: -1 } },
                             { $project: { _id: 1, "commonalities": 1 } }
                         ]);
                     //console.log("theItem", theItem)
@@ -172,18 +173,13 @@ module.exports = {
 
             // console.log("items", items);
 
-            console.log("this is haveWant", haveWant)
+            console.log("this is haveWant", haveWant);
+     
             // console.dir(haveWant, {depth: 4})
 
             //if any items matched their search then pull up the listings
             if (haveWant[0].length || haveWant[1].length) {
                 //TODO: this will also likely need to be an aggregate, you want the highest # of haves and wants in the listing, descending order
-
-
-                console.log()
-
-
-
 
                 const listings = await Listing.aggregate([
                     {
@@ -205,10 +201,21 @@ module.exports = {
                                 }
                             ]
                             */
-                            want:
-                            {
-                                $in: [haveWant[1][0]._id]
-                            }
+                            $or: [
+                                {
+                                    have:
+                                    {
+                                        $in: haveWant[0].map(i=>i._id)
+                                    }
+                                },
+                                {
+                                    want:
+                                    {
+                                        $in: haveWant[1].map(i=>i._id)
+                                    }
+                                }
+                            ]
+
 
                         }
                     },
@@ -236,17 +243,26 @@ module.exports = {
 
                                         */
 
-                                         //this works as of 9/14 8:10pm check notes for further details
-                                           return req[1].filter((i) => {
-    
-                                               
-                                               return dbWant.map(i => i.toString()).includes(i._id.toString())
-    
-                                           })
+                                        //this works as of 9/14 8:10pm check notes for further details
+                                        //    return req[1].filter((i) => {
 
-                                           //TODO ^ use reduce on the above to sum the commonalities
-    
-                            
+
+                                        //        return dbWant.map(i => i.toString()).includes(i._id.toString())
+
+                                        //    })
+
+                                        //TODO ^ use reduce on the above to sum the commonalities
+
+                                        const testArray = req.map((i, j) => {
+                                            const testthing = i.filter((k) => {
+                                                return arguments[j].map(l => l.toString()).includes(k._id.toString());
+                                            });
+                                            return testthing;
+                                        });
+
+                                        return testArray.flat().reduce((a, c) => a + c.commonalities, 0);
+
+
                                     },
                                     args: ["$have", "$want", haveWant],
                                     lang: "js"
@@ -255,13 +271,29 @@ module.exports = {
                         }
                     },
 
-                    { $project: { "totalCommon": 1 } }
+                   
+                    { $sort: { totalCommon: -1 } },
 
+                    //TODO 2 lookups?
+                    { $lookup: {
+                        from: "items",
+                        localField: "have",
+                        foreignField: "_id",
+                        as: "Have"
+                    }},
+                    { $lookup: {
+                        from: "items",
+                        localField: "want",
+                        foreignField: "_id",
+                        as: "Want"
+                    }},
+
+                    { $project: {_id: 0, "have": 0, "want": 0, __v: 0}}
 
                 ])
                 // .populate('have want');
 
-                console.log(listings)
+                console.log("this is listings", listings)
 
                 res.status(200).json(listings);
             } else {
