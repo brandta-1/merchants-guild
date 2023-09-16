@@ -13,14 +13,7 @@ const userSchema = new Schema(
             type: String,
             required: true,
             min: 7,
-        },
-
-        listings: [
-            {
-                type: Schema.Types.ObjectId,
-                ref: 'Listing'
-            }
-        ]
+        }
     }
 );
 
@@ -29,7 +22,6 @@ userSchema.pre('save', async function (next) {
         const saltRounds = 10;
         this.password = await bcrypt.hash(this.password, saltRounds);
     }
-
     next();
 });
 

@@ -27,12 +27,40 @@ const names = [
     'username 9',
 ]
 
+const exampleItems = [
+    {
+        rarity: "Legendary",
+        name: "Arming Sword",
+        enchantments: [
+            {
+                property: "Magical Healing",
+                value: 1
+            }
+        ]
+    },
+    {
+        rarity: "Rare",
+        name: "Falchion",
+        enchantments: [
+            {
+                property: "Agility",
+                value: 2
+            },
+            {
+                property: "Knowledge",
+                value: 3
+            }
+        ]
+    }
+]
+
 const pw = '0123456';
 
 connection.once('open', async () => {
     console.log('connected');
     //await seedUsers();
-    await seedItems();
+    await seedItems(exampleItems);
+    
     console.info('Seeding complete! 🌱');
     process.exit(0);
 }
@@ -56,13 +84,20 @@ async function seedUsers() {
     console.table(currentUsers);
 }
 
-async function seedItems() {
+async function seedItems(x) {
 
     await Item.deleteMany({});
 
-    await Promise.all(
-        itemRarity.map(async (i) => {
-            return Item.create([{ rarity: i }])
+    
+
+    let testarray = await Promise.all(
+        x.map(async (i) => {
+            console.log(i);
+            return Item.create(i)
         })
-    )
+    );
+
+    console.log(testarray);
 }
+
+
