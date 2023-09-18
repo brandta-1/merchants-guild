@@ -1,10 +1,8 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
-import { createUser } from './utils/API';
 import { Home, Login, Profile, Search, Listing } from './pages'
 function App() {
-
 
   return (
     <Router>
