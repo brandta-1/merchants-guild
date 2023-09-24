@@ -1,70 +1,95 @@
 import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
-import { itemRarity, itemProperties } from '../utils/items';
+import { itemRarity, itemProperties, itemNames } from '../utils/items';
 
-const ItemForm = ({ item, append, id, index }) => {
 
-    //TODO: removing an item from the parent component always just deletes the last element of the ench array being mapped at the bottom of this component
-    //TODO: may need to refactor with ench being a prop instead of being stateful in this component
+const ItemForm = ({ deleteItem, id, sendToParent }) => {
 
+    const [item, setItem] = useState();
+    const [rarity, setRarity] = useState('Uncommon');
     const [ench, setEnch] = useState([]);
-    console.log("ench console log at the top of the component", ench);
-    console.log("item.enchantments console log at the top of the component", item.enchantments);
+
     useEffect(() => {
-        append(item, index, ench, id)
-    }, [ench])
+        sendToParent(item, rarity, ench, id);
+    }, [item, rarity, ench])
+
+
+    // console.log("this is ench state", ench)
+
+    const IRS = itemRarity.map((i) => i.label);
+
+    const enchants = IRS.slice(-IRS.indexOf(rarity) - 1);
+
+
+    const addItem = (e) => {
+        //   console.log("this is the item", e);
+        setItem(e);
+    }
+
+    const addRarity = (e) => {
+        // console.log("this is the rarity", e);
+        setRarity(e);
+    }
+
+    const addEnch = (e,j) => {
+        // console.log("this is the ench", e);
+        setEnch((c) => {
+            c[j]={property: e, value: 0}
+            return c;
+        });
+    }
+
+
 
     return (
-        <>
-            <h4>{item.label} Settings:</h4>
-            <h6>Rarity:</h6>
+        <div className="item-box">
             <Select
-                options={itemRarity}
-                onChange={(e) => append(item, index, e, id)}
-            />
-            <h6>Enchantments:</h6>
-            <Select
-                options={itemProperties}
-                isMulti={true}
-                //TODO back-end for this
-                isOptionDisabled={() => ench.length >= 6}
-                onChange={(e) => {
+                className="item-select"
+                options={itemNames}
+                placeholder={`Select Item ${id+1}`}
+                onChange={({ value }) => addItem(value)}
 
-                    setEnch((c) => {
-                        //if youre deleting an enchantment
-                        if (c.length > e.length) {
-                            //this can probably be better
-                            const newC = c.filter((i) => e.map(({ label }) => label).includes(i.property));
-                            console.log("this is newC",newC);
-                            return newC;
-                        }
-                        //if youre adding an enchantment
-                        const newC = c.concat([{ property: e[e.length - 1].label }]);
-                        return newC;
-                    })
-                }}
             />
 
-            {/* this should be another component, but thats more prop drilling*/}
-            {ench.map((i, j) => {
-                console.log("THIS IS ALL OF ENCH",ench);
-                console.log("THIS IS THE I BEING MAPPED FOR ENCHANTMENTS",i);
-                return (
-                    <div key={j}>
-                        <p>{i.property}</p>
-                        <input type='number' placeholder={`${i.property}`} onChange={(e) => {
-                            setEnch((c) => {
-                                c[j].value = parseInt(e.target.value);
-                                return c;
-                            })
-                        }}
-                        />
-                    </div>
-                )
-            })}
-        </>
+            {item &&
+                <>
+                    <Select
+                        options={itemRarity}
+                        placeholder={rarity}
+                        onChange={({ value }) => addRarity(value)}
+
+                    />
+                    {enchants.map((i, j) => {
+                        return (
+                            <>
+                                <Select
+                                    options={itemProperties}
+                                    onChange={({ value }) => addEnch(value,j)}
+                                />
+
+                                <input
+                                    type='number'
+                                    onChange={({ target }) => {
+                                        let value = parseInt(target.value);
+                                        value = isNaN(value) ? 0 : value;
+                                        // console.log("this is the number", value);
+                                        // console.log("this is the index", j);
+                                        setEnch((c) => {
+                                            c[j].value = value;
+                                            return c;
+                                        })
+                                    }}
+                                />
+                            </>
+                        )
+                    })}
+                </>
+            }
+
+            <button className="item-delete" onClick={() => deleteItem(id)}>delete item</button>
+        </div>
     )
-};
+}
 
 
 export default ItemForm;
