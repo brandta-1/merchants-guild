@@ -2,7 +2,7 @@ export const createUser = async (userData) => {
 
   console.log(userData);
 
-  return fetch('/api/users', {
+  return await fetch('/api/users', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -13,7 +13,7 @@ export const createUser = async (userData) => {
 
 
 export const loginUser = async (userData) => {
-  return fetch('/api/users/login', {
+  return await fetch('/api/users/login', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -32,8 +32,8 @@ export const setListing = (listing) => {
   });
 }
 
-export const getListing = (search) => {
-  return fetch('/api/listings/get', {
+export const getListing = async (search) => {
+  return await fetch('/api/listings/get', {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -42,8 +42,8 @@ export const getListing = (search) => {
   });
 }
 
-export const deleteListing = (listing) => {
-  return fetch('/api/listings/delete', {
+export const deleteListing = async (listing) => {
+  return await fetch('/api/listings/delete', {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',

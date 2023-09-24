@@ -3,7 +3,13 @@ const { User, Listing, Item } = require('../model');
 module.exports = {
 
     async setListing(req, res) {
+        
         try {
+
+            console.log(req.body);
+            req.body[0].forEach((i)=>console.log("enchantments",i.enchantments))
+            res.status(200).json("check server")
+            return;
 
             //pull description and owner data off the request
             const descr = Object.values(req.body.pop())[0];
