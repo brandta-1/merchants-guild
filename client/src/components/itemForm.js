@@ -36,7 +36,11 @@ const ItemForm = ({ theItem, deleteItem, id, sendToParent }) => {
     const addEnch = (e, j) => {
         // console.log("this is the ench", e);
         setEnch((c) => {
-            c[j] = { property: e, value: 0 }
+            if (e) {
+                c[j] = { property: e, value: 0 }
+                return c;
+            }
+            c.splice(j, 1);
             return c;
         });
     }
@@ -48,7 +52,7 @@ const ItemForm = ({ theItem, deleteItem, id, sendToParent }) => {
             <Select
                 className="item-select"
                 options={itemNames}
-                placeholder={`Select Item ${id + 1}`}
+                placeholder={`Select Item`}
                 onChange={({ value }) => addItem(value)}
 
             />
@@ -66,7 +70,8 @@ const ItemForm = ({ theItem, deleteItem, id, sendToParent }) => {
                             <div key={j}>
                                 <Select
                                     options={itemProperties}
-                                    onChange={({ value }) => addEnch(value, j)}
+                                    onChange={(e) => { addEnch(e ? e.value : 0, j) }}
+                                    isClearable
                                 />
 
                                 <input

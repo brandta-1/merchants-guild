@@ -1,71 +1,78 @@
 import React, { useState, useEffect } from 'react';
-import Select from 'react-select';
-import ItemForm from './ItemForm';
-import { v4 as uuidv4 } from 'uuid';
+import ItemFormArray from './ItemFormArray';
+
+const ListingForm = ({ sendToNet }) => {
+
+    const [formState, setFormState] = useState([[], []]);
+
+    const [name, setName] = useState();
+    const [desc, setDesc] = useState();
+
+    console.log(formState);
+
+    function sendToParent() {
+
+        if (!name) {
+            alert("Enter the name of the character that has the items, as it appears in-game, in `Character Name`");
+            return;
+        }
 
 
-const ListingForm = () => {
-
-    const [items, setItems] = useState([]);
-
-    const deleteItem = (id) => {
-        console.log("deleted", id)
-
-        setItems((c) => {
-
-            const index = c.map((i) => i.id).indexOf(id);
-
-            const test = c.toSpliced(index, 1)
-            console.log(test);
-            return test;
+        const filteredArrays = formState.map((i) => {
+            const filtered = i.filter(({ name }) => name)
+                .map(({ name, rarity, enchantments }) => {
+                    return { name, rarity, enchantments }
+                });
+            return filtered;
         });
 
+        console.log(filteredArrays[0].length, filteredArrays[1].length)
+
+        if (!filteredArrays[0].length || !filteredArrays[1].length) {
+            alert("A posted listing must contain items you have and items you want")
+            return;
+        }
+
+        filteredArrays.push({ owner: name });
+
+        if (desc) {
+            filteredArrays.push({ description: desc });
+        }
+
+        sendToNet(filteredArrays);
     }
 
-    const addItem = (e) => {
-        console.log(e);
-
-        setItems((c) => {
-
-            return [...c, { name: undefined, rarity: 'Uncommon', enchantments: [], id: uuidv4() }]
-
-        })
-    }
-
-    const sendToParent = (item, rarity, ench, id) => {
-
-        console.log("item", item, "rarity", rarity, "ench", ench, "id", id)
-        setItems((c) => {
-
-            const index = c.map((i) => i.id).indexOf(id);
-
-            c[index] = {
-                ...c[index],
-                name: item,
-                rarity: rarity,
-                enchantments: ench
-            }
-
+    const sendToForm = (data, index) => {
+        setFormState((c) => {
+            console.log(c)
+            c[index] = data
             return c;
         })
-
     }
 
     return (
         <>
-            <h1>Item Form</h1>
-            {items.map((i) => {
+
+            {formState.map((i, j) => {
+                console.log(j);
                 return (
-                    <ItemForm deleteItem={deleteItem} theItem={i} key={i.id} id={i.id} sendToParent={sendToParent} />
+                    <ItemFormArray key={j} id={j} sendToForm={sendToForm} />
                 )
+
             })}
 
-            <button onClick={addItem}>add Another Item</button>
+            <input type='text'
+                placeholder='Character name'
+                onChange={(e) => setName(e.target.value)} />
+            <br />
+            <input type='text'
+                placeholder='Listing description'
+                onChange={(e) => { setDesc(e.target.value) }} />
+            <br />
 
-
-            <br></br>
-            <button onClick={() => console.log(items)}>print items</button>
+            <button onClick={sendToParent}>print items</button>
         </>
     )
 }
+
 export default ListingForm;
