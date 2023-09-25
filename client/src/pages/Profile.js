@@ -1,10 +1,16 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+
+
+
 
 const Profile = () => {
+
     return (
-        <div>
-            <p>Profile</p>
-        </div>
+        <>
+
+            <h1>Profile</h1>
+            
+        </>
     )
 };
 

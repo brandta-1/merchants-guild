@@ -1,11 +1,10 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import Select from 'react-select';
+import ItemForm from '../components/ItemForm';
 
 const Search = () => {
     return (
-        <div>
-            <p>Search</p>
-        </div>
+        <h1>Search</h1>
     )
-};
-
+}
 export default Search;

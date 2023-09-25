@@ -13,6 +13,13 @@
   }
 }
 
+.item-box {
+  display: flex;
+}
+.item-select {
+  width: 50%;
+}
+
 .App-header {
   background-color: #282c34;
   min-height: 100vh;
