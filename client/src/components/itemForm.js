@@ -3,16 +3,18 @@ import Select from 'react-select';
 import { itemRarity, itemProperties, itemNames } from '../utils/items';
 
 
-const ItemForm = ({ deleteItem, id, sendToParent }) => {
+const ItemForm = ({ theItem, deleteItem, id, sendToParent }) => {
 
     const [item, setItem] = useState();
     const [rarity, setRarity] = useState('Uncommon');
     const [ench, setEnch] = useState([]);
 
     useEffect(() => {
+        console.log("is this running????")
         sendToParent(item, rarity, ench, id);
     }, [item, rarity, ench])
 
+    console.log(theItem);
 
     // console.log("this is ench state", ench)
 
@@ -31,10 +33,10 @@ const ItemForm = ({ deleteItem, id, sendToParent }) => {
         setRarity(e);
     }
 
-    const addEnch = (e,j) => {
+    const addEnch = (e, j) => {
         // console.log("this is the ench", e);
         setEnch((c) => {
-            c[j]={property: e, value: 0}
+            c[j] = { property: e, value: 0 }
             return c;
         });
     }
@@ -46,7 +48,7 @@ const ItemForm = ({ deleteItem, id, sendToParent }) => {
             <Select
                 className="item-select"
                 options={itemNames}
-                placeholder={`Select Item ${id+1}`}
+                placeholder={`Select Item ${id + 1}`}
                 onChange={({ value }) => addItem(value)}
 
             />
@@ -61,10 +63,10 @@ const ItemForm = ({ deleteItem, id, sendToParent }) => {
                     />
                     {enchants.map((i, j) => {
                         return (
-                            <>
+                            <div key={j}>
                                 <Select
                                     options={itemProperties}
-                                    onChange={({ value }) => addEnch(value,j)}
+                                    onChange={({ value }) => addEnch(value, j)}
                                 />
 
                                 <input
@@ -80,7 +82,7 @@ const ItemForm = ({ deleteItem, id, sendToParent }) => {
                                         })
                                     }}
                                 />
-                            </>
+                            </div>
                         )
                     })}
                 </>

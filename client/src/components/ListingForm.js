@@ -1,38 +1,51 @@
 import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
-import ItemForm from '../components/ItemForm';
+import ItemForm from './ItemForm';
+import { v4 as uuidv4 } from 'uuid';
 
 
 const ListingForm = () => {
 
-
-
-    const [numItems, setNumItems] = useState([0])
-    const [items, setItems] = useState([0]);
-
-    console.log("top of component state", items)
+    const [items, setItems] = useState([]);
 
     const deleteItem = (id) => {
         console.log("deleted", id)
 
         setItems((c) => {
 
-            const test = c.toSpliced(id, 1)
+            const index = c.map((i) => i.id).indexOf(id);
+
+            const test = c.toSpliced(index, 1)
             console.log(test);
             return test;
         });
 
     }
 
+    const addItem = (e) => {
+        console.log(e);
+
+        setItems((c) => {
+
+            return [...c, { name: undefined, rarity: 'Uncommon', enchantments: [], id: uuidv4() }]
+
+        })
+    }
+
     const sendToParent = (item, rarity, ench, id) => {
 
-        // console.log(item, rarity, ench, id)
+        console.log("item", item, "rarity", rarity, "ench", ench, "id", id)
         setItems((c) => {
-            c[id] = {
+
+            const index = c.map((i) => i.id).indexOf(id);
+
+            c[index] = {
+                ...c[index],
                 name: item,
                 rarity: rarity,
                 enchantments: ench
-            };
+            }
+
             return c;
         })
 
@@ -41,14 +54,17 @@ const ListingForm = () => {
     return (
         <>
             <h1>Item Form</h1>
-            {items.map((i, j) => {
-                console.log("THIS IS I",i)
+            {items.map((i) => {
                 return (
-                    <ItemForm deleteItem={deleteItem} key={i.name || j} id={j} sendToParent={sendToParent} />
+                    <ItemForm deleteItem={deleteItem} theItem={i} key={i.id} id={i.id} sendToParent={sendToParent} />
                 )
             })}
 
-            <button onClick={() => setItems((c) => c.concat([0]))}>add Another Item</button>
+            <button onClick={addItem}>add Another Item</button>
+
+
+            <br></br>
+            <button onClick={() => console.log(items)}>print items</button>
         </>
     )
 }
