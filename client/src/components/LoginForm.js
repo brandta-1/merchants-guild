@@ -4,7 +4,7 @@ import { Form, Button, Alert } from 'react-bootstrap';
 
 import { loginUser } from '../utils/API';
 
-const LoginForm = () => {
+const LoginForm = ({redirect}) => {
   const [userFormData, setUserFormData] = useState({ email: '', password: '' });
   const [validated] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
@@ -27,8 +27,8 @@ const LoginForm = () => {
     try {
       const response = await loginUser(userFormData);
 
-      const {user} = await response.json();
-      console.log(user);
+      const { user } = await response.json();
+      window.location.assign(redirect);
     } catch (err) {
       console.error(err);
       setShowAlert(true);

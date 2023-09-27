@@ -13,21 +13,21 @@ const ItemFormArray = ({sendToForm,id}) => {
     },[items]);
 
     const deleteItem = (id) => {
-        console.log("deleted", id)
+      
 
         setItems((c) => {
 
             const index = c.map((i) => i.id).indexOf(id);
 
             const test = c.toSpliced(index, 1)
-            console.log(test);
+       
             return test;
         });
 
     }
 
     const addItem = (e) => {
-        console.log(e);
+   
 
         setItems((c) => {
 
@@ -38,7 +38,6 @@ const ItemFormArray = ({sendToForm,id}) => {
 
     const sendToParent = (item, rarity, ench, id) => {
 
-        console.log("item", item, "rarity", rarity, "ench", ench, "id", id)
         setItems((c) => {
 
             const index = c.map((i) => i.id).indexOf(id);

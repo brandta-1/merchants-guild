@@ -8,8 +8,7 @@ const ListingForm = ({ sendToNet }) => {
     const [name, setName] = useState();
     const [desc, setDesc] = useState();
 
-    console.log(formState);
-
+   
     function sendToParent() {
 
         if (!name) {
@@ -26,25 +25,21 @@ const ListingForm = ({ sendToNet }) => {
             return filtered;
         });
 
-        console.log(filteredArrays[0].length, filteredArrays[1].length)
+      
 
         if (!filteredArrays[0].length || !filteredArrays[1].length) {
             alert("A posted listing must contain items you have and items you want")
             return;
         }
 
-        filteredArrays.push({ owner: name });
+        filteredArrays.push({ owner: name }, { description: desc });
 
-        if (desc) {
-            filteredArrays.push({ description: desc });
-        }
 
         sendToNet(filteredArrays);
     }
 
     const sendToForm = (data, index) => {
         setFormState((c) => {
-            console.log(c)
             c[index] = data
             return c;
         })
@@ -54,7 +49,6 @@ const ListingForm = ({ sendToNet }) => {
         <>
 
             {formState.map((i, j) => {
-                console.log(j);
                 return (
                     <ItemFormArray key={j} id={j} sendToForm={sendToForm} />
                 )

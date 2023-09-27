@@ -10,31 +10,22 @@ const ItemForm = ({ theItem, deleteItem, id, sendToParent }) => {
     const [ench, setEnch] = useState([]);
 
     useEffect(() => {
-        console.log("is this running????")
         sendToParent(item, rarity, ench, id);
     }, [item, rarity, ench])
-
-    console.log(theItem);
-
-    // console.log("this is ench state", ench)
 
     const IRS = itemRarity.map((i) => i.label);
 
     const enchants = IRS.slice(-IRS.indexOf(rarity) - 1);
 
-
     const addItem = (e) => {
-        //   console.log("this is the item", e);
         setItem(e);
     }
 
     const addRarity = (e) => {
-        // console.log("this is the rarity", e);
         setRarity(e);
     }
 
     const addEnch = (e, j) => {
-        // console.log("this is the ench", e);
         setEnch((c) => {
             if (e) {
                 c[j] = { property: e, value: 0 }
@@ -44,8 +35,6 @@ const ItemForm = ({ theItem, deleteItem, id, sendToParent }) => {
             return c;
         });
     }
-
-
 
     return (
         <div className="item-box">
@@ -79,8 +68,6 @@ const ItemForm = ({ theItem, deleteItem, id, sendToParent }) => {
                                     onChange={({ target }) => {
                                         let value = parseInt(target.value);
                                         value = isNaN(value) ? 0 : value;
-                                        // console.log("this is the number", value);
-                                        // console.log("this is the index", j);
                                         setEnch((c) => {
                                             c[j].value = value;
                                             return c;

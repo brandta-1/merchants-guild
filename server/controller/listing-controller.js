@@ -3,13 +3,13 @@ const { User, Listing, Item } = require('../model');
 module.exports = {
 
     async setListing(req, res) {
-        
+
         try {
 
             console.log(req.body);
-            req.body[0].forEach((i)=>console.log("enchantments",i.enchantments))
-            res.status(200).json("check server")
-            return;
+            req.body[0].forEach((i) => console.log("enchantments", i.enchantments))
+
+
 
             //pull description and owner data off the request
             const descr = Object.values(req.body.pop())[0];
@@ -21,14 +21,35 @@ module.exports = {
                 const idArray = await Promise.all(property.map(async (i) => {
 
                     // console.log("this is i", i)
+                    let theItem;
 
+                    if (!i.enchantments.length) {
+
+                        theItem = await Item.findOneAndUpdate(
+
+                            {
+                                name: i.name,
+                                rarity: i.rarity,
+                                enchantments: []
+                            },
+
+                            {
+                                $setOnInsert: i
+                            },
+                            {
+                                new: true,
+                                upsert: true
+                            });
+
+                        return theItem._id.toHexString();
+                    }
                     const findElem = i.enchantments.map((i) => {
                         return { $elemMatch: { property: i.property, value: i.value } }
                     });
 
                     //  console.log(findElem);
                     //always returns the item, only creates it if it doesnt already exist.
-                    const theItem = await Item.findOneAndUpdate(
+                    theItem = await Item.findOneAndUpdate(
 
                         {
                             name: i.name,
@@ -53,6 +74,8 @@ module.exports = {
                 // console.log(haveWant);
             }
 
+
+
             const theListing = await Listing.create({
                 user: req.session.user_id,
                 owner: theOwner,
@@ -61,23 +84,25 @@ module.exports = {
                 description: descr
             });
 
+            await theListing.populate('have want');
             res.status(200).json(theListing)
 
         } catch (err) {
+            console.log(err);
             res.status(400).json(err);
         }
     },
 
     async getListing(req, res) {
-    
+
         try {
 
-           
+
             //if we want all the listings for a specific user the client will send an empty get req
             if (!req.body[0]) {
                 const listings = await Listing.find({
                     user: req.session.user_id
-                })
+                }).populate('have want');
                 return res.status(200).json(listings);
             }
 

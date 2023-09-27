@@ -3,7 +3,7 @@ import { Form, Button, Alert } from 'react-bootstrap';
 
 import { createUser } from '../utils/API';
 
-const SignupForm = () => {
+const SignupForm = ({redirect}) => {
   // set initial form state
   const [userFormData, setUserFormData] = useState({ username: '', password: '' });
   // set state for form validation
@@ -30,7 +30,8 @@ const SignupForm = () => {
       const response = await createUser(userFormData);
 
       const { user } = await response.json();
-      console.log(user);
+      localStorage.setItem('_id', user._id);
+      window.location.assign(redirect);
     } catch (err) {
       console.error(err);
       setShowAlert(true);

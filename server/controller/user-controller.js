@@ -3,6 +3,14 @@ const uuid = require('../utils/uuid');
 
 module.exports = {
 
+    async requireAuth(req, res) {
+        if (!req.session.logged_in) {
+            res.status(200).json({ logged_in: false })
+        } else {
+            res.status(200).json({ logged_in: true })
+        }
+    },
+
     async setUser(req, res) {
 
         try {
@@ -13,7 +21,7 @@ module.exports = {
             req.session.save(() => {
                 req.session.user_id = theUser.id;
                 req.session.logged_in = true;
-                res.status(200).json(theUser);
+                res.status(200).json({user: theUser});
             });
         } catch (err) {
 
@@ -49,16 +57,22 @@ module.exports = {
 
     async login(req, res) {
 
+
+
         const theUser = await User.findOne({ username: req.body.username });
 
         if (!theUser) {
-            res.status(400).json("no user found with this email")
+            res.status(400).json("no user found with this username")
+            return;
         }
 
         const pw = await theUser.isCorrectPassword(req.body.password);
 
+        console.log("pw", pw)
+
         if (!pw) {
             res.status(400).json("wrong password")
+            return;
         }
 
         req.session.save(() => {
@@ -66,5 +80,15 @@ module.exports = {
             req.session.logged_in = true;
             res.status(200).json({ user: theUser, message: 'You are now logged in!' });
         });
+    },
+
+    async logout(req, res) {
+        if (req.session.logged_in) {
+            req.session.destroy(() => {
+                res.status(204).end();
+            });
+        } else {
+            res.status(404).end();
+        }
     }
 }

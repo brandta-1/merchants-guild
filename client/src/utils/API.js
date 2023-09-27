@@ -1,7 +1,4 @@
 export const createUser = async (userData) => {
-
-  console.log(userData);
-
   return await fetch('/api/users', {
     method: 'POST',
     headers: {
@@ -22,24 +19,35 @@ export const loginUser = async (userData) => {
   });
 };
 
-export const setListing = (listing) => {
-  return fetch('/api/listings/post', {
+export const logoutUser = async () => {
+  return await fetch('/api/users/logout', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    }
+  });
+};
+
+export const setListing = async (listing) => {
+  const res = await fetch('/api/listings/post', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(listing),
   });
+  return res.json();
 }
 
 export const getListing = async (search) => {
-  return await fetch('/api/listings/get', {
+  const res = await fetch('/api/listings/get', {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(search),
   });
+  return res.json();
 }
 
 export const deleteListing = async (listing) => {
@@ -50,4 +58,16 @@ export const deleteListing = async (listing) => {
     },
     body: JSON.stringify(listing),
   });
+}
+
+
+export const isLoggedIn = async () => {
+  const res = await fetch('/api/users/auth', {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    }
+  });
+
+  return res.json();
 }

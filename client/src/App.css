@@ -13,12 +13,68 @@
   }
 }
 
+body {
+  font-family: 'Ubuntu', sans-serif;
+  background-color: #3e4450;
+  color: white;
+}
+
+.item-box{
+  color: black;
+}
+p{
+  color: white;
+}
+.home-page {
+  height: 100%;
+
+  /* Center and scale the image nicely */
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
 .item-box {
   display: flex;
 }
+
 .item-select {
   width: 50%;
 }
+
+.home-page>* {
+  margin-top: 10px;
+  margin-left: 25%;
+  margin-right: 25%;
+  color: white;
+}
+
+.home-image {
+  width: 50%;
+
+}
+
+
+.Uncommon {
+  color: rgb(98, 190, 11);
+}
+
+.Rare {
+  color: rgb(74, 155, 209);
+}
+
+.Epic {
+  color: rgb(173, 90, 255);
+}
+
+.Legendary {
+  color: rgb(247, 162, 45);
+}
+
+.Unique {
+  color: rgb(227, 216, 140)
+}
+
 
 .App-header {
   background-color: #282c34;
@@ -39,6 +95,7 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
