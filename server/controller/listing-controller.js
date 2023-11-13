@@ -7,7 +7,8 @@ module.exports = {
         try {
 
             console.log(req.body);
-            req.body[0].forEach((i) => console.log("enchantments", i.enchantments))
+            req.body[0].forEach((i) => console.log(" have enchantments", i.enchantments))
+            req.body[1].forEach((i) => console.log(" want enchantments", i.enchantments))
 
 
 

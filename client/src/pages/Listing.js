@@ -3,11 +3,8 @@ import { Navigate, Route } from 'react-router-dom'
 import { setListing, getListing } from '../utils/API';
 import ListingForm from '../components/ListingForm';
 import ListingPreview from '../components/ListingPreview';
-import Card from 'react-bootstrap/Card';
 
 
-
-let x = 0;
 
 const Listing = () => {
 
@@ -43,17 +40,18 @@ const Listing = () => {
 
             <ListingForm sendToNet={sendToNet} />
 
+            <h3>Active Listings:</h3>
 
             {listings &&
                 <>
 
-                    <h3>Active Listings:</h3>
+                    
 
                     {listings.map((i) => {
                         return (
-                            <Card bg="dark">
+                            
                                 <ListingPreview listing={i} key={i._id} />
-                            </Card>
+                            
                         )
                     })}
 

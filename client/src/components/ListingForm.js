@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import ItemFormArray from './ItemFormArray';
+import Card from 'react-bootstrap/Card';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+
 
 const ListingForm = ({ sendToNet }) => {
 
@@ -8,7 +13,7 @@ const ListingForm = ({ sendToNet }) => {
     const [name, setName] = useState();
     const [desc, setDesc] = useState();
 
-   
+
     function sendToParent() {
 
         if (!name) {
@@ -20,12 +25,13 @@ const ListingForm = ({ sendToNet }) => {
         const filteredArrays = formState.map((i) => {
             const filtered = i.filter(({ name }) => name)
                 .map(({ name, rarity, enchantments }) => {
+                    enchantments = enchantments.filter(n => n)
                     return { name, rarity, enchantments }
                 });
             return filtered;
         });
 
-      
+
 
         if (!filteredArrays[0].length || !filteredArrays[1].length) {
             alert("A posted listing must contain items you have and items you want")
@@ -34,6 +40,7 @@ const ListingForm = ({ sendToNet }) => {
 
         filteredArrays.push({ owner: name }, { description: desc });
 
+        console.log("BOUT TO SEND THIS TO SERVER", filteredArrays)
 
         sendToNet(filteredArrays);
     }
@@ -48,23 +55,35 @@ const ListingForm = ({ sendToNet }) => {
     return (
         <>
 
-            {formState.map((i, j) => {
-                return (
-                    <ItemFormArray key={j} id={j} sendToForm={sendToForm} />
-                )
+            <Container className="item-container">
+                <Card border="light" className="item-listing">
+                    <Row>
+                        <Col className="name-box">
+                            <input type='text'
+                                className="name name-input"
+                                placeholder='Character name'
+                                onChange={(e) => setName(e.target.value)} />
+                        </Col>
+                    </Row>
+                    <Row className="align-items-center">
+                        {formState.map((i, j) => {
+                            return (
+                                <ItemFormArray key={j} id={j} sendToForm={sendToForm} />
+                            )
 
-            })}
+                        })}
+                    </Row>
 
-            <input type='text'
-                placeholder='Character name'
-                onChange={(e) => setName(e.target.value)} />
-            <br />
-            <input type='text'
-                placeholder='Listing description'
-                onChange={(e) => { setDesc(e.target.value) }} />
-            <br />
 
-            <button onClick={sendToParent}>print items</button>
+                    <input className="desc" type='text'
+                        placeholder='type the listing description here'
+                        onChange={(e) => { setDesc(e.target.value) }} />
+                    <br />
+
+                    <button className="form-button" onClick={sendToParent}>create listing</button>
+
+                </Card>
+            </Container>
         </>
     )
 }

@@ -15,16 +15,102 @@
 
 body {
   font-family: 'Ubuntu', sans-serif;
-  background-color: #3e4450;
+  background-color: rgb(37, 37, 37);
   color: white;
 }
 
-.item-box{
+.item-box {
   color: black;
+
 }
-p{
+
+p {
   color: white;
 }
+
+.item-container {
+  display: flex;
+  width: 100%;
+  max-width: 80%;
+  margin: 0 auto;
+  justify-content: center;
+
+}
+
+.arrow-icon {
+  width: 100%;
+}
+
+.time-stamp-box {
+
+  padding-left: 0px;
+
+}
+
+
+
+.time-stamp {
+  color: white;
+  border-bottom: solid 1px rgb(248, 249, 250);
+  margin-bottom: 1%;
+  padding: .75%;
+  text-align: right;
+}
+
+.desc {
+  margin-top: 1%;
+  color: white;
+  background-color: rgb(64, 64, 64);
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+  padding: .75%;
+}
+
+.name {
+  color: white;
+  border-bottom: solid 1px rgb(248, 249, 250);
+  margin-bottom: 1.5%;
+  padding: .75%;
+}
+
+.name-box {
+  padding-right: 0px;
+ 
+}
+
+.form-button{
+  border-radius: 6px;
+  width: 50%;
+  margin-left: 25%;
+}
+
+.name-input{
+  color: black;
+  margin-left: 10px;
+  margin-top: 5px;
+  border-radius: 5px;
+  border: solid black 2px;
+}
+
+.item-array {
+  padding: 0;
+
+}
+
+.item-block {
+  background-color: rgb(57, 57, 57);
+  margin-left: 5%;
+  margin-right: 5%;
+}
+
+
+.item-listing {
+  margin-bottom: 30px;
+  width: 65%;
+  background-color: rgb(37, 37, 37);
+}
+
+
 .home-page {
   height: 100%;
 
@@ -34,12 +120,16 @@ p{
   background-size: cover;
 }
 
-.item-box {
-  display: flex;
+.arrow {
+  width: 100%;
 }
 
+
 .item-select {
-  width: 50%;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: rgb(200,200,200);
+  
 }
 
 .home-page>* {
@@ -85,6 +175,10 @@ p{
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
+}
+
+.nav {
+  background-color: rgb(10, 10, 10);
 }
 
 .App-link {

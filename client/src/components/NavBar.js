@@ -13,7 +13,6 @@ const { logged_in } = await isLoggedIn();
 
 const AppNavbar = () => {
 
-    // set modal display state
     const [showModal, setShowModal] = useState(false);
     const [redirect, setRedirect] = useState('/')
 
@@ -24,7 +23,7 @@ const AppNavbar = () => {
 
     return (
         <>
-            <Navbar bg='dark' variant='dark' expand='lg'>
+            <Navbar className="nav" variant='dark' expand='lg'>
                 <Container fluid>
                     <Navbar.Brand as={Link} to='/'>
                         The Trader's Guild
@@ -35,7 +34,6 @@ const AppNavbar = () => {
                             <Nav.Link as={Link} to='/search'>
                                 Search Listings
                             </Nav.Link>
-                            {/* if user is logged in show saved books and logout */}
                             {logged_in ? (
                                 <>
                                     <Nav.Link as={Link} to='/listing'>
@@ -56,14 +54,13 @@ const AppNavbar = () => {
                     </Navbar.Collapse>
                 </Container>
             </Navbar>
-            {/* set modal data up */}
+         
             <Modal
                 size='lg'
                 show={showModal}
                 redirect={redirect}
                 onHide={() => setShowModal(false)}
                 aria-labelledby='signup-modal'>
-                {/* tab container to do either signup or login component */}
                 <Tab.Container defaultActiveKey='login'>
                     <Modal.Header closeButton>
                         <Modal.Title id='signup-modal'>

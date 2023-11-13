@@ -2,32 +2,37 @@ import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
 import ItemForm from './ItemForm';
 import { v4 as uuidv4 } from 'uuid';
+import Card from 'react-bootstrap/Card';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import arrow from '../assets/arrows.png';
+import ListGroup from 'react-bootstrap/ListGroup';
 
+const ItemFormArray = ({ sendToForm, id }) => {
 
-const ItemFormArray = ({sendToForm,id}) => {
+    const [items, setItems] = useState([{ name: undefined, rarity: 'Uncommon', enchantments: [], id: uuidv4() }]);
 
-    const [items, setItems] = useState([0]);
-
-    useEffect(()=>{
-        sendToForm(items,id);
-    },[items]);
+    useEffect(() => {
+        sendToForm(items, id);
+    }, [items]);
 
     const deleteItem = (id) => {
-      
+
 
         setItems((c) => {
 
             const index = c.map((i) => i.id).indexOf(id);
 
             const test = c.toSpliced(index, 1)
-       
+
             return test;
         });
 
     }
 
     const addItem = (e) => {
-   
+
 
         setItems((c) => {
 
@@ -56,18 +61,38 @@ const ItemFormArray = ({sendToForm,id}) => {
 
     return (
         <>
-            <h1>Item Form</h1>
-            {items.map((i) => {
-                return (
-                    <ItemForm deleteItem={deleteItem} theItem={i} key={i.id} id={i.id} sendToParent={sendToParent} />
-                )
-            })}
+            <Col className="item-array">
+                <ListGroup >
+                    {/* this could be more succinct if written in the parent component*/}
+                    {!id ? (
+                        <ListGroup.Item className="item-block form-title" border="secondary">
+                            <p>Items You Have</p>
+                        </ListGroup.Item>
+                    ) : (
+                        <ListGroup.Item className="item-block form-title" border="secondary">
+                            <p>Items You Want</p>
+                        </ListGroup.Item>
+                    )}
 
-            <button onClick={addItem}>add Another Item</button>
+                    {items.map((i,j) => {
+                        return (
+                            <ItemForm deleteItem={deleteItem} theItem={i} key={i.id} id={i.id} index={j} sendToParent={sendToParent} length={items.length} />
+                        )
+                    })}
+
+                    <ListGroup.Item className="item-block" border="secondary">
+                        <button className="form-button" onClick={addItem}>add item</button>
+                    </ListGroup.Item>
+                </ListGroup>
 
 
-            <br></br>
-            
+
+            </Col>
+            {!id &&
+                <Col xs={1}>
+                    <img src={arrow} className="arrow-icon" />
+                </Col>
+            }
         </>
     )
 }

@@ -1,34 +1,50 @@
 import React, { useState, useEffect } from 'react';
-
+import Card from 'react-bootstrap/Card';
+import Col from 'react-bootstrap/Col';
+import arrow from '../assets/arrows.png';
+import ListGroup from 'react-bootstrap/ListGroup';
 const ItemArrayPreview = ({ items, id }) => {
 
 
 
     return (
         <>
+            <Col className="item-array">
 
-            {items.map((i, j) => {
+                <ListGroup >
+                    {items.map((i, j) => {
 
-                return (
-                    <>
+                        return (
+                            <>
+                                <ListGroup.Item className="item-block" border="secondary">
+                                    <h4 className={i.rarity} key={j}>{i.name}</h4>
 
-                        <h5 className={i.rarity} key={j}>{i.name}</h5>
+                                    {i.enchantments.map((k, l) => {
+                                        return (
+                                            <>
+                                                {k.value ? (
+                                                    <p>+{k.value} {k.property}</p>
+                                                ) : (
+                                                    <p>+{k.property}</p>
+                                                )}
+                                            </>
+                                        )
 
-                        {i.enchantments.map((k, l) => {
-                            return (
-                                <p>+{k.value} {k.property}</p>
-                            )
+                                    })}
+                                </ListGroup.Item>
+                            </>
+                        )
 
-                        })}
-                    </>
-                )
-            })}
+                    })}
 
+                </ListGroup>
+            </Col>
             {!id &&
-                <>
-                    <p>{"<->"}</p>
-                </>
+                <Col xs={2}>
+                    <img src={arrow} className="arrow-icon" />
+                </Col>
             }
+
         </>
     )
 
