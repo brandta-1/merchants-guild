@@ -7,8 +7,10 @@ import Col from 'react-bootstrap/Col';
 
 const ListingPreview = ({ listing }) => {
 
+    const ts= new Date().toLocaleDateString();
+    
     const { owner, description } = listing
-    console.log("description:", description);
+   // console.log("description:", description);
     const items = [listing.have, listing.want];
     return (
         <>
@@ -19,7 +21,7 @@ const ListingPreview = ({ listing }) => {
                             <Card.Title className="name">{owner}</Card.Title>
                         </Col>
                         <Col className="time-stamp-box">
-                            <Card.Title className="time-stamp">9/27/23</Card.Title>
+                            <Card.Title className="time-stamp">{ts}</Card.Title>
                         </Col>
                     </Row>
 
