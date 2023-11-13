@@ -40,7 +40,7 @@ const ListingForm = ({ sendToNet }) => {
 
         filteredArrays.push({ owner: name }, { description: desc });
 
-        console.log("BOUT TO SEND THIS TO SERVER", filteredArrays)
+        //console.log("sending this to server:", filteredArrays)
 
         sendToNet(filteredArrays);
     }
