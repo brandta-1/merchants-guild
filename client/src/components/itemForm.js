@@ -6,7 +6,7 @@ import ListGroup from 'react-bootstrap/ListGroup';
 
 const ItemForm = ({ theItem, deleteItem, id, sendToParent, index, length }) => {
 
-    console.log(index);
+    //console.log(index);
     const [item, setItem] = useState();
     const [rarity, setRarity] = useState('Uncommon');
     const [ench, setEnch] = useState([]);

@@ -6,12 +6,15 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
 const ListingPreview = ({ listing }) => {
-
-    const ts= new Date().toLocaleDateString();
     
-    const { owner, description } = listing
+    //TODO: this needs to come from DB
+    const ts= new Date().toLocaleDateString();
+    console.log("Listing Preview", listing);
+    const { owner, description } = listing;
+    console.log(owner,description)
    // console.log("description:", description);
-    const items = [listing.have, listing.want];
+    const items = [listing.have || listing.Have, listing.want || listing.Want];
+    console.log(items);
     return (
         <>
             <Container className="item-container">

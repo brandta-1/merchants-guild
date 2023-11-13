@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Navigate, Route } from 'react-router-dom'
 import { setListing, getListing } from '../utils/API';
 import ListingForm from '../components/ListingForm';
 import ListingPreview from '../components/ListingPreview';
 
-
+//TODO you can come here if you aren't logged in
 
 const Listing = () => {
 
@@ -12,6 +11,7 @@ const Listing = () => {
 
     useEffect(() => {
         if (listings) {
+            console.log(listings);
             return
         }
         displayUser();
@@ -27,6 +27,8 @@ const Listing = () => {
 
         const res = await setListing(form);
 
+        console.log("LISTING RES",res)
+
         if (res) {
             setListings((c) => {
                 return [...c, res]
@@ -38,10 +40,10 @@ const Listing = () => {
         <>
             <p>Listing</p>
 
-            <ListingForm sendToNet={sendToNet} />
+            <ListingForm sendToNet={sendToNet} searching={false}/>
 
             <h3>Active Listings:</h3>
-
+            {console.log("LISTINGS STATE LISTING:",listings)}
             {listings &&
                 <>
 

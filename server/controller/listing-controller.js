@@ -1,5 +1,5 @@
 const { User, Listing, Item } = require('../model');
-
+const util = require('util');
 module.exports = {
 
     async setListing(req, res) {
@@ -110,8 +110,9 @@ module.exports = {
 
             let haveWant = [];
             for (const property of Object.values(req.body)) {
-                const items = await Promise.all(property.map(async (i) => {
 
+                const items = await Promise.all(property.map(async (i) => {
+                 
                     const args = [
                         {
                             $addFields:
@@ -121,7 +122,7 @@ module.exports = {
                                     $function:
                                     {
                                         body: function (db, req) {
-                                            return db.filter((i) => req.includes(i)).length
+                                            return db.filter((j) => req.map(k=>k.property).includes(j)).length 
                                         },
                                         args: ["$enchantments.property", i.enchantments],
                                         lang: "js"
@@ -133,18 +134,21 @@ module.exports = {
                         { $project: { _id: 1, "commonalities": 1 } }
                     ];
 
+
                     //if theyre searching by item name and not just by an enchantment
                     if (i.name) {
                         args.unshift({ $match: { name: i.name } })
                     }
 
-                    // console.log(i.name);
+                    console.log("argscheck", util.inspect(args, false, null, true /* enable colors */))
+
                     const theItem = await Item.aggregate(args);
-                    //console.log("theItem", theItem)
+                    console.log("theItem", theItem)
                     return theItem;
                 }));
 
                 haveWant.push(items.flat())
+
             }
             // console.log("this is haveWant", haveWant);
             //if any items matched their search then pull up the listings

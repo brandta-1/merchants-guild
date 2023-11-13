@@ -41,7 +41,7 @@ export const setListing = async (listing) => {
 
 export const getListing = async (search) => {
   const res = await fetch('/api/listings/get', {
-    method: 'GET',
+    method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },

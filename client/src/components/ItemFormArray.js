@@ -9,7 +9,7 @@ import Col from 'react-bootstrap/Col';
 import arrow from '../assets/arrows.png';
 import ListGroup from 'react-bootstrap/ListGroup';
 
-const ItemFormArray = ({ sendToForm, id }) => {
+const ItemFormArray = ({ sendToForm, id, reset }) => {
 
     const [items, setItems] = useState([{ name: undefined, rarity: 'Uncommon', enchantments: [], id: uuidv4() }]);
 
@@ -17,9 +17,12 @@ const ItemFormArray = ({ sendToForm, id }) => {
         sendToForm(items, id);
     }, [items]);
 
+    useEffect(() => {
+        setItems([{ name: undefined, rarity: 'Uncommon', enchantments: [], id: uuidv4() }]);
+    }, [reset])
+
+
     const deleteItem = (id) => {
-
-
         setItems((c) => {
 
             const index = c.map((i) => i.id).indexOf(id);
@@ -32,8 +35,6 @@ const ItemFormArray = ({ sendToForm, id }) => {
     }
 
     const addItem = (e) => {
-
-
         setItems((c) => {
 
             return [...c, { name: undefined, rarity: 'Uncommon', enchantments: [], id: uuidv4() }]
@@ -74,7 +75,7 @@ const ItemFormArray = ({ sendToForm, id }) => {
                         </ListGroup.Item>
                     )}
 
-                    {items.map((i,j) => {
+                    {items.map((i, j) => {
                         return (
                             <ItemForm deleteItem={deleteItem} theItem={i} key={i.id} id={i.id} index={j} sendToParent={sendToParent} length={items.length} />
                         )
