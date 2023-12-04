@@ -12,7 +12,7 @@ const Home = () => {
                     <Card.Body>
                         <Card.Title>Welcome to The Trader's Guild</Card.Title>
                         <Card.Text>
-                            To see update progress, please visi the GitHub repository: https://github.com/brandta-1/merchants-guild
+                            To see update progress, please visit the GitHub repository <a href="https://github.com/brandta-1/merchants-guild">here</a>
                         </Card.Text>
                     </Card.Body>
                 </Card>
