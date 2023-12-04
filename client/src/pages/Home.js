@@ -12,8 +12,7 @@ const Home = () => {
                     <Card.Body>
                         <Card.Title>Welcome to The Trader's Guild</Card.Title>
                         <Card.Text>
-                            Some quick example text to build on the card title and make up the
-                            bulk of the card's content.
+                            To see update progress, please visi the GitHub repository: https://github.com/brandta-1/merchants-guild
                         </Card.Text>
                     </Card.Body>
                 </Card>
