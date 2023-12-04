@@ -1,21 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Navigate, Route } from 'react-router-dom'
-import { setListing, getListing } from '../utils/API';
+import { setListing, getListing, deleteListing } from '../utils/API';
 import ListingForm from '../components/ListingForm';
 import ListingPreview from '../components/ListingPreview';
 
-
+//TODO you can come here if you aren't logged in
 
 const Listing = () => {
 
-    const [listings, setListings] = useState(null);
+    const [listings, setListings] = useState([]);
 
-    useEffect(() => {
-        if (listings) {
-            return
-        }
-        displayUser();
-    }, [])
+    useEffect(() => { displayUser() }, [])
 
     const displayUser = async () => {
         const theUser = await getListing();
@@ -29,29 +23,37 @@ const Listing = () => {
 
         if (res) {
             setListings((c) => {
+                //TODO properly implement this on setListing 
+                Object.assign(res, {ownership: true})
+                if (c == []) {
+                    return [res]
+                }
                 return [...c, res]
             });
         }
     }
 
+    const removeListing = async (id) => {
+        const res = await deleteListing(id);
+        setListings(listings.filter(i => i._id !== id))
+    }
+
     return (
         <>
-            <p>Listing</p>
+            <div><br></br></div>
 
-            <ListingForm sendToNet={sendToNet} />
+            <ListingForm sendToNet={sendToNet} searching={false} />
 
-            <h3>Active Listings:</h3>
-
-            {listings &&
+            {(Array.isArray(listings) && listings.length > 0) &&
                 <>
-
-                    
+                    <h3 className="results">Your Active Listings:</h3>
+                    <div><br></br></div>
 
                     {listings.map((i) => {
                         return (
-                            
-                                <ListingPreview listing={i} key={i._id} />
-                            
+
+                            <ListingPreview listing={i} key={i._id} removeListing={removeListing} />
+
                         )
                     })}
 

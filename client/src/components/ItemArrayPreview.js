@@ -40,7 +40,7 @@ const ItemArrayPreview = ({ items, id }) => {
                 </ListGroup>
             </Col>
             {!id &&
-                <Col xs={2}>
+                <Col xs={2} >
                     <img src={arrow} className="arrow-icon" />
                 </Col>
             }

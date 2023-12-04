@@ -1,5 +1,6 @@
 const { User, Listing, Item } = require('../model');
-
+const mongoose = require("mongoose");
+const util = require('util');
 module.exports = {
 
     async setListing(req, res) {
@@ -101,15 +102,43 @@ module.exports = {
 
             //if we want all the listings for a specific user the client will send an empty get req
             if (!req.body[0]) {
-                const listings = await Listing.find({
-                    user: req.session.user_id
-                }).populate('have want');
+                // let listings = await Listing.find({
+                //     user: req.session.user_id
+                // }).populate('have want');
+                // console.log("listings print",listings);
+                // listings = listings.map((i)=> ({...i, owner: i.user==req.session.user_id}));
+                // return res.status(200).json(listings);
+                const args = [
+                    {
+                        $addFields:
+                        {
+                            ownership:
+                            {
+                                $function:
+                                {
+                                    body: function (db, req) {
+                                        return db == req;
+                                    },
+                                    args: ["$user", req.session.user_id],
+                                    lang: "js"
+                                }
+                            }
+                        }
+                    },
+                    {
+                        $match: { user: new mongoose.Types.ObjectId(req.session.user_id) }
+                    }
+                ]
+                const listings = await Listing.aggregate(args);
+                await Item.populate(listings, { path: "have want" });
+                console.log("here's listings", listings)
                 return res.status(200).json(listings);
             }
 
 
             let haveWant = [];
             for (const property of Object.values(req.body)) {
+
                 const items = await Promise.all(property.map(async (i) => {
 
                     const args = [
@@ -121,7 +150,7 @@ module.exports = {
                                     $function:
                                     {
                                         body: function (db, req) {
-                                            return db.filter((i) => req.includes(i)).length
+                                            return db.filter((j) => req.map(k => k.property).includes(j)).length
                                         },
                                         args: ["$enchantments.property", i.enchantments],
                                         lang: "js"
@@ -129,21 +158,22 @@ module.exports = {
                                 }
                             }
                         },
-                        { $match: { commonalities: { $gt: 0 } } },
+                        // { $match: { commonalities: { $gt: 0 } } },
                         { $project: { _id: 1, "commonalities": 1 } }
                     ];
+
 
                     //if theyre searching by item name and not just by an enchantment
                     if (i.name) {
                         args.unshift({ $match: { name: i.name } })
                     }
 
-                    // console.log(i.name);
+                    console.log("argscheck", util.inspect(args, false, null, true /* enable colors */))
+
                     const theItem = await Item.aggregate(args);
-                    //console.log("theItem", theItem)
+                    console.log("theItem", theItem)
                     return theItem;
                 }));
-
                 haveWant.push(items.flat())
             }
             // console.log("this is haveWant", haveWant);
@@ -184,6 +214,22 @@ module.exports = {
                         }
                     }
                 },
+                {
+                    $addFields:
+                    {
+                        ownership:
+                        {
+                            $function:
+                            {
+                                body: function (db, req) {
+                                    return db == req;
+                                },
+                                args: ["$user", req.session.user_id],
+                                lang: "js"
+                            }
+                        }
+                    }
+                },
                 { $sort: { totalCommon: -1 } },
                 {
                     $lookup: {
@@ -201,11 +247,13 @@ module.exports = {
                         as: "Want"
                     }
                 },
-                { $project: { _id: 0, "have": 0, "want": 0, __v: 0 } }
+                { $project: { "have": 0, "want": 0, __v: 0 } }
             ])
-            //  console.log("this is listings", listings)
+
+            console.log("this is listings", listings)
             return res.status(200).json(listings);
         } catch (err) {
+            console.log(err);
             res.status(400).json(err);
         }
     },
@@ -224,14 +272,21 @@ module.exports = {
     async deleteListing(req, res) {
         try {
 
-            if (!req.body.user == req.session.user_id) {
-                return res.status(401).json("ownership mismatch")
+            console.log('TRYING DELETE')
+            console.log(req.body);
+
+            const listing = await Listing.find({ _id: req.body.id });
+            console.log(listing);
+
+            if (listing[0].user.toString() == req.session.user_id) {
+                console.log("made it here")
+                const theListing = await Listing.findOneAndDelete({ _id: req.body.id });
+                console.log("deleted?");
+                console.log(theListing);
+                res.status(200).json(theListing);
+            } else {
+                res.status(403).json("error deleting item")
             }
-
-            const theListing = await Listing.findOneAndDelete({ _id: req.body._id });
-
-            return res.status(200).json(theListing);
-
         } catch (err) {
             res.status(400).json(err);
         }

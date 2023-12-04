@@ -9,7 +9,7 @@ import Col from 'react-bootstrap/Col';
 import arrow from '../assets/arrows.png';
 import ListGroup from 'react-bootstrap/ListGroup';
 
-const ItemFormArray = ({ sendToForm, id }) => {
+const ItemFormArray = ({ sendToForm, id, reset, searching }) => {
 
     const [items, setItems] = useState([{ name: undefined, rarity: 'Uncommon', enchantments: [], id: uuidv4() }]);
 
@@ -17,9 +17,12 @@ const ItemFormArray = ({ sendToForm, id }) => {
         sendToForm(items, id);
     }, [items]);
 
+    useEffect(() => {
+        setItems([{ name: undefined, rarity: 'Uncommon', enchantments: [], id: uuidv4() }]);
+    }, [reset])
+
+
     const deleteItem = (id) => {
-
-
         setItems((c) => {
 
             const index = c.map((i) => i.id).indexOf(id);
@@ -32,8 +35,6 @@ const ItemFormArray = ({ sendToForm, id }) => {
     }
 
     const addItem = (e) => {
-
-
         setItems((c) => {
 
             return [...c, { name: undefined, rarity: 'Uncommon', enchantments: [], id: uuidv4() }]
@@ -66,15 +67,15 @@ const ItemFormArray = ({ sendToForm, id }) => {
                     {/* this could be more succinct if written in the parent component*/}
                     {!id ? (
                         <ListGroup.Item className="item-block form-title" border="secondary">
-                            <p>Items You Have</p>
+                            <h5>{searching ? 'Items They Have' :'Items You Have'}</h5>
                         </ListGroup.Item>
                     ) : (
                         <ListGroup.Item className="item-block form-title" border="secondary">
-                            <p>Items You Want</p>
+                            <h5>{searching ? 'Items They Want' :'Items You Want'}</h5>
                         </ListGroup.Item>
                     )}
 
-                    {items.map((i,j) => {
+                    {items.map((i, j) => {
                         return (
                             <ItemForm deleteItem={deleteItem} theItem={i} key={i.id} id={i.id} index={j} sendToParent={sendToParent} length={items.length} />
                         )
