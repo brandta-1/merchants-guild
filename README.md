@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # merchants-guild
 Repository for my [Dark and Darker](https://www.darkanddarker.com/) trading site
 
@@ -13,3 +14,9 @@ On the Search Listings page, you can use a similar form to find characters buyin
 The search results are displayed below, ordered by closest match, custom filtering and sorting will be added.
 ![image](https://github.com/brandta-1/merchants-guild/assets/116298512/56aeea94-b48e-4353-a1b5-dd11a506784a)
 
+=======
+# merchants-guild
+repository for my dark and darker trading hub site
+
+currently live at: https://traders-guild-a1de141fdce9.herokuapp.com/
+>>>>>>> 67d14aa120c2460f5245e7391469542b48b14a43
