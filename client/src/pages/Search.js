@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import ListingForm from '../components/ListingForm';
 import ListingPreview from '../components/ListingPreview';
-import { getListing } from '../utils/API';
+import { getListing, deleteListing } from '../utils/API';
 
 const Search = () => {
 
@@ -9,10 +9,10 @@ const Search = () => {
 
     const sendToNet = async (form) => {
 
-        console.log("sendtoNet form:", form)
+      
 
         const res = await getListing(form);
-        console.log("SEARCH RES", res)
+     
         if (res) {
             setListings(res);
         }
@@ -20,13 +20,13 @@ const Search = () => {
 
     return (
         <>
-            <h1>Search</h1>
-
+            <div><br></br></div>
             <ListingForm sendToNet={sendToNet} searching={true} />
             {console.log("LISTINGS STATE SEARCH:", listings)}
             {listings &&
                 <>
-
+                    <h3 className="results">Found {Array.isArray(listings) ? listings.length : 0} Listin{ listings.length==1 ? 'g' : 'gs'}:</h3>
+                    <div><br></br></div>
                     {listings == 'empty' ? (
                         <>
                             <h1>No listings found</h1>
@@ -36,7 +36,7 @@ const Search = () => {
                             {listings.map((i) => {
                                 return (
 
-                                    <ListingPreview listing={i} key={i._id} />
+                                    <ListingPreview listing={i} key={i._id} deleteListing={deleteListing}/>
 
                                 )
                             })}

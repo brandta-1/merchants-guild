@@ -86,10 +86,11 @@ const ListingForm = ({ sendToNet, searching }) => {
                             </Col>
                         }
                     </Row>
+                    {searching && <div><br></br></div>}
                     <Row className="align-items-center">
                         {formState.map((i, j) => {
                             return (
-                                <ItemFormArray key={j} id={j} sendToForm={sendToForm} reset={reset}/>
+                                <ItemFormArray key={j} id={j} sendToForm={sendToForm} reset={reset} searching={searching}/>
                             )
 
                         })}
@@ -106,9 +107,13 @@ const ListingForm = ({ sendToNet, searching }) => {
                         </>
                     }
 
+                    {searching && <div><br></br></div>}
+
                     <button className="form-button" onClick={sendToParent}>
                         {searching ? "Search Listings" : "Create Listing"}
                     </button>
+
+                    <div><br></br></div>
 
                 </Card>
             </Container>

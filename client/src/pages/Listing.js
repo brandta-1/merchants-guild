@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { setListing, getListing } from '../utils/API';
+import { setListing, getListing, deleteListing } from '../utils/API';
 import ListingForm from '../components/ListingForm';
 import ListingPreview from '../components/ListingPreview';
 
@@ -7,15 +7,9 @@ import ListingPreview from '../components/ListingPreview';
 
 const Listing = () => {
 
-    const [listings, setListings] = useState(null);
+    const [listings, setListings] = useState([]);
 
-    useEffect(() => {
-        if (listings) {
-            console.log(listings);
-            return
-        }
-        displayUser();
-    }, [])
+    useEffect(() => { displayUser() }, [])
 
     const displayUser = async () => {
         const theUser = await getListing();
@@ -27,33 +21,39 @@ const Listing = () => {
 
         const res = await setListing(form);
 
-        console.log("LISTING RES",res)
-
         if (res) {
             setListings((c) => {
+                //TODO properly implement this on setListing 
+                Object.assign(res, {ownership: true})
+                if (c == []) {
+                    return [res]
+                }
                 return [...c, res]
             });
         }
     }
 
+    const removeListing = async (id) => {
+        const res = await deleteListing(id);
+        setListings(listings.filter(i => i._id !== id))
+    }
+
     return (
         <>
-            <p>Listing</p>
+            <div><br></br></div>
 
-            <ListingForm sendToNet={sendToNet} searching={false}/>
+            <ListingForm sendToNet={sendToNet} searching={false} />
 
-            <h3>Active Listings:</h3>
-            {console.log("LISTINGS STATE LISTING:",listings)}
-            {listings &&
+            {(Array.isArray(listings) && listings.length > 0) &&
                 <>
-
-                    
+                    <h3 className="results">Your Active Listings:</h3>
+                    <div><br></br></div>
 
                     {listings.map((i) => {
                         return (
-                            
-                                <ListingPreview listing={i} key={i._id} />
-                            
+
+                            <ListingPreview listing={i} key={i._id} removeListing={removeListing} />
+
                         )
                     })}
 

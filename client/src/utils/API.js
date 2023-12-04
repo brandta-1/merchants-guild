@@ -50,13 +50,13 @@ export const getListing = async (search) => {
   return res.json();
 }
 
-export const deleteListing = async (listing) => {
+export const deleteListing = async (id) => {
   return await fetch('/api/listings/delete', {
-    method: 'DELETE',
+    method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(listing),
+    body: JSON.stringify({id}),
   });
 }
 

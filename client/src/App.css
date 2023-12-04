@@ -75,13 +75,21 @@ p {
 
 .name-box {
   padding-right: 0px;
- 
 }
 
+.label {
+  color: rgb(150,150,150);
+}
 .form-button{
   border-radius: 6px;
   width: 50%;
   margin-left: 25%;
+}
+
+.form-title > h5{
+  text-align:center;
+  margin-bottom: 0;
+  color: white;
 }
 
 .name-input{
@@ -113,7 +121,6 @@ p {
 
 .home-page {
   height: 100%;
-
   /* Center and scale the image nicely */
   background-position: center;
   background-repeat: no-repeat;
@@ -124,6 +131,10 @@ p {
   width: 100%;
 }
 
+.results{
+  text-align: center;
+  margin-bottom: 0;
+}
 
 .item-select {
   width: 100%;
@@ -183,6 +194,17 @@ p {
 
 .App-link {
   color: #61dafb;
+}
+
+.delete-button{
+  border: none;
+  background: none;
+  padding: 0;
+  padding-left: 15px;
+}
+
+.delete-button:hover {
+  text-decoration: underline;
 }
 
 @keyframes App-logo-spin {

@@ -9,7 +9,7 @@ import Col from 'react-bootstrap/Col';
 import arrow from '../assets/arrows.png';
 import ListGroup from 'react-bootstrap/ListGroup';
 
-const ItemFormArray = ({ sendToForm, id, reset }) => {
+const ItemFormArray = ({ sendToForm, id, reset, searching }) => {
 
     const [items, setItems] = useState([{ name: undefined, rarity: 'Uncommon', enchantments: [], id: uuidv4() }]);
 
@@ -67,11 +67,11 @@ const ItemFormArray = ({ sendToForm, id, reset }) => {
                     {/* this could be more succinct if written in the parent component*/}
                     {!id ? (
                         <ListGroup.Item className="item-block form-title" border="secondary">
-                            <p>Items You Have</p>
+                            <h5>{searching ? 'Items They Have' :'Items You Have'}</h5>
                         </ListGroup.Item>
                     ) : (
                         <ListGroup.Item className="item-block form-title" border="secondary">
-                            <p>Items You Want</p>
+                            <h5>{searching ? 'Items They Want' :'Items You Want'}</h5>
                         </ListGroup.Item>
                     )}
 

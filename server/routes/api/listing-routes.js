@@ -6,6 +6,6 @@ router.route('/get').post(getListing);
 
 router.route('/post').post(setListing);
 
-router.route('/delete').delete(deleteListing);
+router.route('/delete').post(deleteListing);
 
 module.exports = router;
