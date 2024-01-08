@@ -18,13 +18,13 @@ const Listing = () => {
 
 
     const sendToNet = async (form) => {
-
+        console.log("sendToNet :", form)
         const res = await setListing(form);
 
         if (res) {
             setListings((c) => {
                 //TODO properly implement this on setListing 
-                Object.assign(res, {ownership: true})
+                Object.assign(res, { ownership: true })
                 if (c == []) {
                     return [res]
                 }
@@ -34,8 +34,13 @@ const Listing = () => {
     }
 
     const removeListing = async (id) => {
-        const res = await deleteListing(id);
-        setListings(listings.filter(i => i._id !== id))
+        deleteListing(id)
+            .then(() => {
+                setListings(listings.filter(i => i._id !== id))
+            })
+            .catch(() => {
+                console.log("delete failed")
+            });
     }
 
     return (
@@ -56,12 +61,8 @@ const Listing = () => {
 
                         )
                     })}
-
-
                 </>
             }
-
-
         </>
     )
 };

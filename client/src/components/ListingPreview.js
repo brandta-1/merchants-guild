@@ -6,9 +6,9 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
 const ListingPreview = ({ listing, removeListing }) => {
-
+    
     //TODO: this needs to come from DB
-
+    
     const { owner, description, createdAt, ownership, _id } = listing;
     const ts = new Date(createdAt).toLocaleDateString();
     // console.log("description:", description);

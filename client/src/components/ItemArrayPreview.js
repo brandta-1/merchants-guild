@@ -5,8 +5,6 @@ import arrow from '../assets/arrows.png';
 import ListGroup from 'react-bootstrap/ListGroup';
 const ItemArrayPreview = ({ items, id }) => {
 
-
-
     return (
         <>
             <Col className="item-array">
@@ -16,16 +14,16 @@ const ItemArrayPreview = ({ items, id }) => {
 
                         return (
                             <>
-                                <ListGroup.Item className="item-block" border="secondary">
+                                <ListGroup.Item className="item-block" border="secondary" key={j}>
                                     <h4 className={i.rarity} key={j}>{i.name}</h4>
 
                                     {i.enchantments.map((k, l) => {
                                         return (
                                             <>
                                                 {k.value ? (
-                                                    <p>+{k.value} {k.property}</p>
+                                                    <p key={l}>+{k.value} {k.property}</p>
                                                 ) : (
-                                                    <p>+{k.property}</p>
+                                                    <p key={l}>+{k.property}</p>
                                                 )}
                                             </>
                                         )

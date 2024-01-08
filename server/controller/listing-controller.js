@@ -7,7 +7,7 @@ module.exports = {
 
         try {
 
-            console.log(req.body);
+            console.log("req body here", req.body);
             req.body[0].forEach((i) => console.log(" have enchantments", i.enchantments))
             req.body[1].forEach((i) => console.log(" want enchantments", i.enchantments))
 
@@ -18,11 +18,21 @@ module.exports = {
             const theOwner = Object.values(req.body.pop())[0];
             let haveWant = [];
 
+            const haveTest = req.body[0];
+            const wantTest = req.body[1];
+
+            console.log("haveTest :", haveTest);
+            console.log("wantTest :", wantTest);
+
+            for (const haveWant of [haveTest, wantTest]) {
+                console.log("this is haveWant :", haveWant);
+            }
+
             for (const property of Object.values(req.body)) {
 
                 const idArray = await Promise.all(property.map(async (i) => {
 
-                    // console.log("this is i", i)
+                    console.log("this is i", i)
                     let theItem;
 
                     if (!i.enchantments.length) {
@@ -99,30 +109,13 @@ module.exports = {
 
         try {
 
-
-            //if we want all the listings for a specific user the client will send an empty get req
             if (!req.body[0]) {
-                // let listings = await Listing.find({
-                //     user: req.session.user_id
-                // }).populate('have want');
-                // console.log("listings print",listings);
-                // listings = listings.map((i)=> ({...i, owner: i.user==req.session.user_id}));
-                // return res.status(200).json(listings);
+
                 const args = [
                     {
                         $addFields:
                         {
-                            ownership:
-                            {
-                                $function:
-                                {
-                                    body: function (db, req) {
-                                        return db == req;
-                                    },
-                                    args: ["$user", req.session.user_id],
-                                    lang: "js"
-                                }
-                            }
+                            ownership: true
                         }
                     },
                     {
@@ -142,34 +135,8 @@ module.exports = {
                 const items = await Promise.all(property.map(async (i) => {
 
                     const args = [
-                        {
-                            $addFields:
-                            {
-                                commonalities:
-                                {
-                                    $function:
-                                    {
-                                        body: function (db, req) {
-                                            return db.filter((j) => req.map(k => k.property).includes(j)).length
-                                        },
-                                        args: ["$enchantments.property", i.enchantments],
-                                        lang: "js"
-                                    }
-                                }
-                            }
-                        },
-                        // { $match: { commonalities: { $gt: 0 } } },
-                        { $project: { _id: 1, "commonalities": 1 } }
+                        { $match: { name: i.name } }
                     ];
-
-
-                    //if theyre searching by item name and not just by an enchantment
-                    if (i.name) {
-                        args.unshift({ $match: { name: i.name } })
-                    }
-
-                    console.log("argscheck", util.inspect(args, false, null, true /* enable colors */))
-
                     const theItem = await Item.aggregate(args);
                     console.log("theItem", theItem)
                     return theItem;
@@ -193,44 +160,9 @@ module.exports = {
                 },
                 {
                     $addFields: {
-                        totalCommon:
-                        {
-                            $function:
-                            {
-                                body: function (dbHave, dbWant, req) {
-
-                                    const commons = req.map((i, j) => {
-                                        const matched = i.filter((k) => {
-                                            return arguments[j].map(l => l.toString()).includes(k._id.toString());
-                                        });
-                                        return matched;
-                                    });
-
-                                    return commons.flat().reduce((a, c) => a + c.commonalities, 0);
-                                },
-                                args: ["$have", "$want", haveWant],
-                                lang: "js"
-                            }
-                        }
+                        ownership: { $in: ["$user", [new mongoose.Types.ObjectId(req.session.user_id)]] }
                     }
                 },
-                {
-                    $addFields:
-                    {
-                        ownership:
-                        {
-                            $function:
-                            {
-                                body: function (db, req) {
-                                    return db == req;
-                                },
-                                args: ["$user", req.session.user_id],
-                                lang: "js"
-                            }
-                        }
-                    }
-                },
-                { $sort: { totalCommon: -1 } },
                 {
                     $lookup: {
                         from: "items",

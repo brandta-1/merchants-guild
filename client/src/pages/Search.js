@@ -9,13 +9,23 @@ const Search = () => {
 
     const sendToNet = async (form) => {
 
-      
+
 
         const res = await getListing(form);
-     
+
         if (res) {
             setListings(res);
         }
+    }
+
+    const removeListing = async (id) => {
+        deleteListing(id)
+            .then(() => {
+                setListings(listings.filter(i => i._id !== id))
+            })
+            .catch(() => {
+                console.log("delete failed")
+            });
     }
 
     return (
@@ -25,7 +35,7 @@ const Search = () => {
             {console.log("LISTINGS STATE SEARCH:", listings)}
             {listings &&
                 <>
-                    <h3 className="results">Found {Array.isArray(listings) ? listings.length : 0} Listin{ listings.length==1 ? 'g' : 'gs'}:</h3>
+                    <h3 className="results">Found {Array.isArray(listings) ? listings.length : 0} Listin{listings.length == 1 ? 'g' : 'gs'}:</h3>
                     <div><br></br></div>
                     {listings == 'empty' ? (
                         <>
@@ -36,7 +46,7 @@ const Search = () => {
                             {listings.map((i) => {
                                 return (
 
-                                    <ListingPreview listing={i} key={i._id} deleteListing={deleteListing}/>
+                                    <ListingPreview listing={i} key={i._id} removeListing={removeListing} />
 
                                 )
                             })}
