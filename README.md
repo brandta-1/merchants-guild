@@ -1,5 +1,5 @@
 
-# merchants-guild
+# traders-guild
 Repository for my [Dark and Darker](https://www.darkanddarker.com/) trading site
 
 ## Deployment
